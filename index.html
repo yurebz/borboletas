@@ -70,7 +70,6 @@
         position: absolute;
         top: 10%; 
         left: 50%;
-        
         transform: translate(-50%, -50%);
         width: 90%; 
         max-width: 700px;
@@ -122,7 +121,7 @@
 
     </style>
 
-    <audio id="bg-music" src="musica.mp3" loop preload="auto" autoplay></audio>
+    <audio id="bg-music" src="musica.mp3" loop preload="auto"></audio>
 
     <div id="app">
       <div id="hero">
@@ -169,17 +168,16 @@
         const audio = document.getElementById("bg-music");
         audio.volume = 0.5; 
 
-        window.addEventListener('load', () => {
-            audio.play().catch(e => console.log("Autoplay aguardando..."));
-        });
-
-        function unlockAudio() {
-            if (audio.paused) audio.play();
-            document.body.removeEventListener('click', unlockAudio);
-            document.body.removeEventListener('touchstart', unlockAudio);
+        function startMusic() {
+            if (audio.paused) {
+                audio.play().catch(e => console.log("Play bloqueado pelo browser"));
+            }
+            document.body.removeEventListener('click', startMusic);
+            document.body.removeEventListener('touchstart', startMusic);
         }
-        document.body.addEventListener('click', unlockAudio);
-        document.body.addEventListener('touchstart', unlockAudio);
+
+        document.body.addEventListener('click', startMusic);
+        document.body.addEventListener('touchstart', startMusic);
     </script>
 
     <script>
