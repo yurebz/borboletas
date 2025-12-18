@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BORBOLETAS</title>
+  </head>
+  <body>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@400&display=swap');
+
+      body, html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #ff9a44; 
+      }
+
+      #app {
+        width: 100%;
+        height: 100%;
+        touch-action: none;
+        color: #ffffff;
+        font-family: 'Montserrat', sans-serif;
+        text-align: center;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        user-select: none;
+        position: relative;
+        z-index: 1;
+      }
+
+      #app canvas {
+        display: block;
+        position: fixed;
+        z-index: -1;
+        top: 0;
+        left: 0;
+      }
+
+      #app h1 {
+        --fontSize: 50px;
+        --lineHeight: 70px;
+        width: auto;
+        height: calc(2 * var(--lineHeight));
+        line-height: var(--lineHeight);
+        margin: calc(50vh - var(--lineHeight)) auto 0;
+        font-size: var(--fontSize);
+      }
+
+      @media (max-width: 600px) {
+        #app h1 { --fontSize: 30px; --lineHeight: 40px; }
+      }
+
+      @keyframes flap {
+        0%, 20%, 80%, 100% { transform: scaleX(1) rotate(5deg); }
+        50% { transform: scaleX(0.7) rotate(7deg); }
+      }
+
+      h1 span { display: inline-block; animation: flap 0.75s infinite ease-in-out; }
+
+      @keyframes fadeOutTitle { to { opacity: 0; visibility: hidden; } }
+
+      #hero {
+        animation: fadeOutTitle 2s ease-in-out forwards;
+        animation-delay: 4s;
+      }
+
+      #quote-container {
+        position: absolute;
+        top: 10%; 
+        left: 50%;
+        
+        transform: translate(-50%, -50%);
+        width: 90%; 
+        max-width: 700px;
+        z-index: 10;
+        opacity: 0; 
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #quote-text {
+        font-family: 'Merriweather', serif;
+        font-size: 1.5rem;
+        line-height: 1.6;
+        font-weight: 300;
+        font-style: italic;
+        color: #fff;
+        margin: 0; 
+        padding: 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        width: 100%;
+        text-align: center;
+      }
+      
+      @media (max-width: 600px) {
+          #quote-container {
+             width: 60%; 
+             top: -5%; 
+          }
+          #quote-text { 
+              font-size: 1.2rem; 
+              line-height: 1.5;
+          }
+      }
+
+      .fade-in-anim { animation: fadeInCenter 2.5s ease forwards; }
+      .fade-out-anim { animation: fadeOutCenter 2.5s ease forwards; }
+
+      @keyframes fadeInCenter {
+          from { opacity: 0; transform: translate(-50%, -40%); }
+          to { opacity: 1; transform: translate(-50%, -50%); }
+      }
+
+      @keyframes fadeOutCenter {
+          from { opacity: 1; transform: translate(-50%, -50%); }
+          to { opacity: 0; transform: translate(-50%, -60%); }
+      }
+
+    </style>
+
+    <audio id="bg-music" src="musica.mp3" loop preload="auto" autoplay></audio>
+
+    <div id="app">
+      <div id="hero">
+        <h1><span>🦋</span><br />BORBOLETAS</h1>
+        <h6>mova, zoom, e deslize</h6>
+      </div>
+
+      <div id="quote-container">
+          <p id="quote-text"></p>
+      </div>
+    </div>
+
+    <script type="module">
+      import { butterfliesBackground } from 'https://unpkg.com/threejs-toys@0.0.8/build/threejs-toys.module.cdn.min.js'
+
+      const pc = butterfliesBackground({
+        el: document.getElementById('app'),
+        eventsEl: document.body,
+        gpgpuSize: 18,
+        background: 0xff9a44, 
+        material: 'phong',
+        lights: [
+          { type: 'ambient', params: [0xffdcb4, 0.6] },
+          { type: 'directional', params: [0xffaa33, 1.5], props: { position: [10, 5, 2] } }
+        ],
+        materialParams: { transparent: true, alphaTest: 0.5 },
+        texture: 'https://assets.codepen.io/33787/butterflies.png',
+        textureCount: 4,
+        wingsScale: [2, 2, 2],
+        wingsWidthSegments: 16,
+        wingsHeightSegments: 16,
+        wingsSpeed: 0.75,
+        wingsDisplacementScale: 1.25,
+        noiseCoordScale: 0.01,
+        noiseTimeCoef: 0.0005,
+        noiseIntensity: 0.0025,
+        attractionRadius1: 100,
+        attractionRadius2: 150,
+        maxVelocity: 0.1
+      })
+    </script>
+
+    <script>
+        const audio = document.getElementById("bg-music");
+        audio.volume = 0.5; 
+
+        window.addEventListener('load', () => {
+            audio.play().catch(e => console.log("Autoplay aguardando..."));
+        });
+
+        function unlockAudio() {
+            if (audio.paused) audio.play();
+            document.body.removeEventListener('click', unlockAudio);
+            document.body.removeEventListener('touchstart', unlockAudio);
+        }
+        document.body.addEventListener('click', unlockAudio);
+        document.body.addEventListener('touchstart', unlockAudio);
+    </script>
+
+    <script>
+        const masterQuotes = [
+            "No silêncio da oração, Deus molda as respostas que o teu coração procura.",
+            "A paz que buscas não está fora, mas Naquele que habita em ti.",
+            "Jesus prometeu a força necessária para cada amanhecer.",
+            "Onde os pés não alcançam, a fé te leva.",
+            "A graça de Deus é o abraço que sustenta a tua alma.",
+            "Lembra-te: o Céu permanece firme sobre ti.",
+            "A tua cruz é o caminho para a tua ressurreição.",
+            "Deus ouve o que o teu coração não consegue falar.",
+            "Ser luz é iluminar o caminho de quem está na escuridão.",
+            "A esperança em Cristo é a âncora segura da alma.",
+            "O amor de Deus apenas se sente e se vive.",
+            "A fé vê o invisível e recebe o impossível.",
+            "És um projeto desenhado com detalhes pelo Criador.",
+            "O perdão liberta, e descobres que o prisioneiro eras tu.",
+            "Acalma-te. Deus está escrevendo a tua história.",
+            "O silêncio não é vazio; é cheio de respostas para quem sabe ouvir.",
+            "Crescemos nos momentos em que somos desafiados a mudar.",
+            "A tua essência é o que te torna inesquecível, não a tua aparência.",
+            "A paz que procuras começa no momento em que deixas de controlar tudo.",
+            "Pequenos passos também te levam a grandes lugares.",
+            "Assim como a natureza, tudo em ti tem o tempo certo para florescer.",
+            "É na escuridão que as estrelas aprendem a brilhar com mais força.",
+            "Seja gentil com o teu processo; a evolução não acontece da noite para o dia.",
+            "A vida não é sobre a chegada, é sobre quem te tornas durante o caminho.",
+            "A felicidade não é um destino final, é a maneira como viajas."
+        ];
+
+        let availableQuotes = [...masterQuotes];
+        const quoteContainer = document.getElementById('quote-container');
+        const quoteText = document.getElementById('quote-text');
+
+        function showNextQuote() {
+            quoteContainer.classList.remove('fade-in-anim');
+            quoteContainer.classList.add('fade-out-anim');
+
+            setTimeout(() => {
+                if (availableQuotes.length === 0) {
+                    availableQuotes = [...masterQuotes];
+                }
+                const randomIndex = Math.floor(Math.random() * availableQuotes.length);
+                const quote = availableQuotes.splice(randomIndex, 1)[0];
+                quoteText.textContent = quote;
+
+                quoteContainer.classList.remove('fade-out-anim');
+                quoteContainer.classList.add('fade-in-anim');
+
+            }, 2500); 
+        }
+
+        setTimeout(() => {
+            showNextQuote(); 
+            setInterval(showNextQuote, 11000); 
+        }, 5500);
+    </script>
+  </body>
+</html>
